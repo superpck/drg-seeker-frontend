@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
+import { map } from 'rxjs';
 import CONFIG from '../configs/config';
 
 export type SexCode = '1' | '2';
@@ -27,7 +28,38 @@ export interface DrgSearchResponse {
   ot: string;
   err: string;
   warn: string;
-  tgrp: string;
+  status: string;
+  tgrp: {
+    fileName: string;
+    fileDescription: string;
+    productVersion: string;
+  };
+}
+
+interface DrgApiDataRow {
+  drg?: string;
+  rw?: number;
+  adjrw?: number;
+  wtlos?: number;
+  ot?: string;
+  err?: string;
+  warn?: string;
+}
+
+interface DrgApiTgrp {
+  FileName?: string;
+  metadata?: string;
+}
+
+interface DrgApiResponse {
+  status?: string;
+  data?: DrgApiDataRow[];
+  tgrp?: DrgApiTgrp;
+}
+
+interface DrgTgrpMetadata {
+  FileDescription?: string;
+  ProductVersion?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -36,10 +68,12 @@ export class DrgService {
   private readonly url = CONFIG.apiBaseUrl;
 
   search(payload: DrgSearchRequest) {
-    return this.http.post<DrgSearchResponse>(`${this.url}/seeker`, {
-      version: '6',
-      data: [this.toParams(payload)]
-    });
+    return this.http
+      .post<DrgApiResponse>(`${this.url}/seeker`, {
+        version: '6',
+        data: [this.toParams(payload)]
+      })
+      .pipe(map((response) => this.toSearchResponse(response)));
   }
 
   private toParams(payload: DrgSearchRequest) {
@@ -64,6 +98,39 @@ export class DrgService {
     }
 
     return fields;
+  }
+
+  private toSearchResponse(response: DrgApiResponse): DrgSearchResponse {
+    const row = response.data?.[0] ?? {};
+    const metadata = this.parseTgrpMetadata(response.tgrp?.metadata);
+
+    return {
+      drg: row.drg ?? '',
+      rw: row.rw ?? 0,
+      adjrw: row.adjrw ?? 0,
+      wtlos: row.wtlos ?? 0,
+      ot: row.ot ?? '',
+      err: row.err ?? '',
+      warn: row.warn ?? '',
+      status: response.status ?? '',
+      tgrp: {
+        fileName: response.tgrp?.FileName ?? '',
+        fileDescription: metadata.FileDescription ?? '',
+        productVersion: metadata.ProductVersion ?? ''
+      }
+    };
+  }
+
+  private parseTgrpMetadata(metadataRaw: string | undefined): DrgTgrpMetadata {
+    if (!metadataRaw) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(metadataRaw) as DrgTgrpMetadata;
+    } catch {
+      return {};
+    }
   }
 
 }

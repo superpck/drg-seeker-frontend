@@ -39,6 +39,19 @@ export class DrgSeekerPageComponent {
   readonly response = signal<DrgSearchResponse | null>(null);
   readonly requestPreview = signal<DrgSearchRequest | null>(null);
 
+  private readonly drgErrorMessages: Record<string, string> = {
+    '1': 'No principal diagnosis',
+    '2': 'Invalid principal diagnosis',
+    '3': 'Unacceptable principal diagnosis',
+    '4': 'Principal diagnosis not valid for age',
+    '5': 'Principal diagnosis not valid for sex',
+    '6': 'Age error',
+    '7': 'Ungroupable due to sex error',
+    '8': 'Ungroupable due to discharge type error',
+    '9': 'Length of stay error',
+    '10': 'Ungroupable due to admission weight error'
+  };
+
   readonly form = this.formBuilder.nonNullable.group({
     an: this.formBuilder.nonNullable.control(''),
     sex: this.formBuilder.nonNullable.control<'1' | '2'>('1', [Validators.required]),
@@ -128,6 +141,17 @@ export class DrgSeekerPageComponent {
     console.log('Submitting DRG search with payload:', payload);
     this.drgService.search(payload).subscribe({
       next: (result) => {
+        const drgErrorMessage = this.getDrgErrorMessage(result.err);
+        if (drgErrorMessage) {
+          this.response.set(null);
+          this.submitError.set(`DRG Error ${result.err}: ${drgErrorMessage}`);
+          this.toastrService.error(`DRG Error ${result.err}: ${drgErrorMessage}`, 'คำนวณ DRG ไม่สำเร็จ', {
+            progress: true
+          });
+          this.loading.set(false);
+          return;
+        }
+
         this.response.set(result);
         console.log('Received DRG search response:', result);
         this.loading.set(false);
@@ -214,5 +238,14 @@ export class DrgSeekerPageComponent {
     const isAgeInRange = age >= 0 && age <= 124;
     const isAgeDayInRange = ageday >= 0 && ageday <= 365;
     return isAgeInRange || isAgeDayInRange;
+  }
+
+  private getDrgErrorMessage(errorCode: string) {
+    const normalizedCode = errorCode.trim();
+    if (!normalizedCode || normalizedCode === '0') {
+      return null;
+    }
+
+    return this.drgErrorMessages[normalizedCode] ?? 'Unknown DRG error';
   }
 }
