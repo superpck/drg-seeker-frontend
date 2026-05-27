@@ -1,59 +1,67 @@
-# DrgSeekerFrontend
+# DRG Seeker Frontend
+ระบบการบันทึกข้อมูลผู้ป่วยในเพื่อส่งไปประมวลผลใน DRG Seeker API
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.3.
+## ข้อมูลโปรเจกต์
 
-## Development server
+- Name: `drg-seeker-frontend`
+- Version: `1.0.0`
+- Sub version: `2026.05.27-1`
+- Package manager: `npm@11.12.0`
 
-To start a local development server, run:
+## ความต้องการระบบ
 
-```bash
-ng serve
-```
+- Node.js 20+
+- npm 11+
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## ติดตั้ง
 
 ```bash
-ng generate --help
+npm install
 ```
 
-## Building
-
-To build the project run:
+## รันระบบ (Development)
 
 ```bash
-ng build
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+โปรเจกต์นี้รันที่ `http://localhost:4201`
 
-## Running unit tests
+## คำสั่งที่ใช้บ่อย
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+- `npm start` : รัน Angular dev server ที่พอร์ต 4201 และเปิดเบราว์เซอร์อัตโนมัติ
+- `npm run build` : สร้างไฟล์ build ของแอปพลิเคชัน
+- `npm run watch` : build แบบ watch mode (config `development`)
+- `npm test` : รันการทดสอบ
 
-```bash
-ng test
-```
+## ฟีเจอร์หลัก
 
-## Running end-to-end tests
+- ระบบล็อกอินและการจัดการสถานะ session
+- ฟอร์ม DRG seeker พร้อมแสดงตัวอย่าง payload
+- คำนวณ DRG แบบจำลองผ่าน `DrgService`
+- การค้นหาข้อมูลจาก AN เมื่อ onchange:
+  - ช่อง `an` จะเรียก `onAnChange()`
+  - เรียก `HisService.getIpd(an)`
+  - นำข้อมูลที่ได้มา patch กลับเข้า form
 
-For end-to-end (e2e) testing, run:
+## หมายเหตุการเชื่อมต่อ HIS
 
-```bash
-ng e2e
-```
+`HisService.getIpd()` ปัจจุบันเป็น stub ที่คืนค่า fake `{}`
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+ให้เชื่อม API จริงของสถานพยาบาลที่ไฟล์:
 
-## Additional Resources
+- `src/app/services/his.service.ts`
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+รูปแบบข้อมูลที่คืนกลับควรตรงตาม `HisIpdFormValue` เพื่อให้ map เข้า form ได้โดยตรง
+
+## ไฟล์สำคัญ
+
+- DRG page component: `src/app/pages/drg-seeker/drg-seeker.page.ts`
+- DRG page template: `src/app/pages/drg-seeker/drg-seeker.page.html`
+- HIS service: `src/app/services/his.service.ts`
+- DRG service (mock): `src/app/services/drg.service.ts`
+
+## หมายเหตุ
+
+- Form ใช้ Reactive Forms พร้อม strict typing
+- ช่อง Secondary diagnosis (`sdx`) และ procedure (`proc`) จะแสดงแบบลำดับตามการกรอกช่องก่อนหน้า

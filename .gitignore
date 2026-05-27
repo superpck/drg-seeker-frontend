@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /bazel-out
+config.ts
 
 # Node
 /node_modules
@@ -37,7 +38,15 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
+/temp
+*.log
+*.tsbuildinfo
+*.sh
+*.zip
+*.tar.gz
 
 # System files
+*.swp
+*.swap
 .DS_Store
 Thumbs.db

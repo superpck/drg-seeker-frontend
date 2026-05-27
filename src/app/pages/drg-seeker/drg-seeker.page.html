@@ -1,0 +1,143 @@
+<main class="drg-seeker-page" aria-labelledby="drg-seeker-title">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow text-xl">DRG Workspace</p>
+      <h1 id="drg-seeker-title">{{ config.appName }} {{ config.version }}</h1>
+    </div>
+
+    @if (authUser(); as user) {
+    <div class="user-chip" aria-label="Current user">
+      <span>Signed in as</span>
+      <div class="flex justify-between items-center">
+        <strong class="flex gap-2 items-center">
+          <pk-icon iconSet="google" name="person" [size]="16"></pk-icon>
+          {{ user.displayName }}
+        </strong>
+        <pk-icon iconSet="google" class="cursor-pointer" name="logout" [size]="16" (click)="onLogout()"></pk-icon>
+      </div>
+    </div>
+    }
+  </header>
+
+  <section class="content-card" aria-label="DRG seeker content">
+    <form class="drg-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="grid two-cols">
+        <label>
+          AN
+          <input type="text" formControlName="an" (change)="onAnChange()" />
+        </label>
+
+        <label>
+          <span class="label-title">Sex <span class="required-mark" aria-hidden="true">*</span></span>
+          <select formControlName="sex" required>
+            <option value="1">ชาย</option>
+            <option value="2">หญิง</option>
+          </select>
+        </label>
+
+        <label>
+          INSCL
+          <select formControlName="inscl">
+            @for (code of insclOptions; track code) {
+            <option [value]="code">{{ code }}</option>
+            }
+          </select>
+        </label>
+
+        <label>
+          Age (0-124)
+          <input type="number" formControlName="age" min="0" max="124" />
+        </label>
+
+        <label>
+          Age Day (0-365)
+          <input type="number" formControlName="ageday" min="0" max="365" />
+        </label>
+
+        <label>
+          <span class="label-title">LOS <span class="required-mark" aria-hidden="true">*</span></span>
+          <input type="number" formControlName="los" min="0" required />
+        </label>
+
+        <label>
+          <span class="label-title">Discharge Type (discht) <span class="required-mark" aria-hidden="true">*</span></span>
+          <input type="text" formControlName="discht" required />
+        </label>
+
+        <label>
+          Admit Weight (kg)
+          <input type="number" formControlName="admwt" min="0" step="0.01" />
+        </label>
+
+        <label>
+          Price
+          <input type="number" formControlName="price" min="0" step="0.01" />
+        </label>
+
+        <label>
+          <span class="label-title">Primary Diagnosis (PDX) <span class="required-mark" aria-hidden="true">*</span></span>
+          <input type="text" formControlName="pdx" required />
+        </label>
+      </div>
+
+      <section class="group-card" aria-label="Secondary diagnosis codes">
+        <h3>SDX 1-12</h3>
+        <div class="grid code-grid">
+          @for (idx of sdxIndexes; track idx) {
+          @if (shouldShowSdx(idx)) {
+          <label>
+            SDX{{ idx }}
+            <input type="text" [formControlName]="'sdx' + idx" />
+          </label>
+          }
+          }
+        </div>
+      </section>
+
+      <section class="group-card" aria-label="Procedure codes">
+        <h3>PROC 1-20</h3>
+        <div class="grid code-grid">
+          @for (idx of procIndexes; track idx) {
+          @if (shouldShowProc(idx)) {
+          <label>
+            PROC{{ idx }}
+            <input type="text" [formControlName]="'proc' + idx" />
+          </label>
+          }
+          }
+        </div>
+      </section>
+
+      <button type="submit" [disabled]="loading()">
+        {{ loading() ? 'Searching...' : 'ค้นหา DRG' }}
+      </button>
+    </form>
+
+    @if (submitError(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+    }
+
+    @if (requestPreview(); as req) {
+    <section class="result-card" aria-label="Request payload">
+      <h3>Payload ที่ส่งไปค้นหา</h3>
+      <pre>{{ req | json }}</pre>
+    </section>
+    }
+
+    @if (response(); as result) {
+    <section class="result-card" aria-label="DRG result">
+      <h3>ผลลัพธ์ DRG</h3>
+      <div class="result-grid">
+        <p><span>drg</span><strong>{{ result.drg }}</strong></p>
+        <p><span>rw</span><strong>{{ result.rw }}</strong></p>
+        <p><span>adjrw</span><strong>{{ result.adjrw }}</strong></p>
+        <p><span>wtlos</span><strong>{{ result.wtlos }}</strong></p>
+        <p><span>ot</span><strong>{{ result.ot }}</strong></p>
+        <p><span>err</span><strong>{{ result.err || '-' }}</strong></p>
+        <p><span>warn</span><strong>{{ result.warn || '-' }}</strong></p>
+        <p><span>tgrp</span><strong>{{ result.tgrp }}</strong></p>
+      </div>
+    </section>
+    }
+  </section>
+</main>
