@@ -7,8 +7,8 @@ export type InsclCode = 'UC' | 'SSS' | 'CS' | 'CASH';
 
 export interface DrgSearchRequest {
   sex: SexCode;
-  age: number;
-  ageday: number;
+  age: any;
+  ageday: any;
   los: number;
   discht: string;
   admwt: number;
@@ -45,8 +45,8 @@ export class DrgService {
   private toParams(payload: DrgSearchRequest) {
     const fields: Record<string, string | number> = {
       sex: payload.sex,
-      age: payload.age,
-      ageday: payload.ageday,
+      age: payload.age.toString(),
+      ageday: payload.ageday.toString(),
       los: payload.los,
       discht: payload.discht,
       admwt: payload.admwt,
