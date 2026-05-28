@@ -224,8 +224,8 @@ export class DrgSeekerPageComponent {
     const value = this.form.getRawValue();
 
     return {
-      hn: value.hn,
-      an: value.an,
+      hn: value.hn.trim(),
+      an: value.an.trim(),
       sex: value.sex,
       age: value.age,
       ageday: value.ageday,
