@@ -127,6 +127,18 @@
     @if (response(); as result) {
     <section class="result-card my-3 pk-font-bai-sarabun" aria-label="DRG result">
       <h3 class="pk-font-mitr">ผลลัพธ์ DRG</h3>
+      
+      @if (warningMessages().length > 0) {
+      <div class="warning-box mb-3" role="alert">
+        <strong class="pk-font-mitr">คำเตือน:</strong>
+        <ul class="warning-list">
+          @for (warn of warningMessages(); track $index) {
+          <li>{{ warn }}</li>
+          }
+        </ul>
+      </div>
+      }
+
       <div class="result-grid overflow-auto">
         <p><span>drg</span><strong>{{ result.drg }}</strong></p>
         <p><span>rw</span><strong>{{ result.rw }}</strong></p>

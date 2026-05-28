@@ -38,6 +38,7 @@ export class DrgSeekerPageComponent {
   readonly submitError = signal<string | null>(null);
   readonly response = signal<DrgSearchResponse | null>(null);
   readonly requestPreview = signal<DrgSearchRequestPayload | null>(null);
+  readonly warningMessages = signal<string[]>([]);
 
   private readonly drgErrorMessages: Record<string, string> = {
     '1': 'No principal diagnosis',
@@ -50,6 +51,18 @@ export class DrgSeekerPageComponent {
     '8': 'Ungroupable due to discharge type error',
     '9': 'Length of stay error',
     '10': 'Ungroupable due to admission weight error'
+  };
+
+  private readonly drgWarningFlags: Record<number, string> = {
+    1: 'SDx ใช้ไม่ได้ หรือซ้ำกับ PDx หรือซ้ำกันเอง',
+    2: 'SDx ไม่เหมาะกับอายุ',
+    4: 'SDx ไม่เหมาะกับเพศ หรือเป็นรหัสสำหรับเพศใดเพศหนึ่ง แต่ไม่มีข้อมูลเพศ',
+    8: 'Proc ใช้ไม่ได้ หรือซ้ำกันเอง',
+    16: 'Proc ไม่เหมาะกับเพศ หรือเป็นรหัสสำหรับเพศใดเพศหนึ่ง แต่ไม่มีข้อมูลเพศ',
+    32: 'ไม่มีข้อมูลเพศ หรือใช้รหัสนอกเหนือจากที่กำหนด',
+    64: 'ไม่มีประเภทการจำหน่ายออกจากโรงพยาบาล หรือใช้รหัสนอกเหนือจากที่กำหนด',
+    128: 'ไม่มีวันที่ และ/หรือ เวลา ที่รับไว้ในโรงพยาบาล หรือ มีแต่ไม่ถูกต้อง',
+    256: 'ไม่มีวันที่ และ/หรือ เวลา ที่จำหน่ายออกจากโรงพยาบาล หรือ มีแต่ไม่ถูกต้อง'
   };
 
   readonly form = this.formBuilder.nonNullable.group({
@@ -153,6 +166,16 @@ export class DrgSeekerPageComponent {
           }
 
           this.response.set(result);
+
+          const warnings = this.decodeWarningCode(result.warn);
+          this.warningMessages.set(warnings);
+          if (warnings.length > 0) {
+            this.toastrService.warning(
+              warnings.join('; '),
+              `พบคำเตือน (${warnings.length})`,
+              { progress: true }
+            );
+          }
 
           if (this.config.saveHIS) {
             const an = this.form.controls.an.value.trim();
@@ -287,5 +310,23 @@ export class DrgSeekerPageComponent {
     }
 
     return this.drgErrorMessages[normalizedCode] ?? 'Unknown DRG error';
+  }
+
+  private decodeWarningCode(warnCode: unknown): string[] {
+    const warnings: string[] = [];
+    const code = Number(warnCode ?? 0);
+
+    if (!code || isNaN(code)) {
+      return warnings;
+    }
+
+    for (const [flag, message] of Object.entries(this.drgWarningFlags)) {
+      const flagNum = Number(flag);
+      if ((code & flagNum) === flagNum) {
+        warnings.push(message);
+      }
+    }
+
+    return warnings;
   }
 }

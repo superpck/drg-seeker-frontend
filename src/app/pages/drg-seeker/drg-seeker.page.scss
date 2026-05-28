@@ -193,6 +193,25 @@ h3 {
   border-radius: 10px;
 }
 
+.warning-box {
+  margin: 0;
+  color: rgb(120 53 15);
+  background: rgb(254 249 195);
+  border: 1px solid rgb(253 224 71);
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+}
+
+.warning-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.warning-list li {
+  margin: 0.25rem 0;
+}
+
 pre {
   margin: 0;
   overflow: auto;

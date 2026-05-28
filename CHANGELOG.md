@@ -13,6 +13,10 @@
 - เพิ่มการแจ้งเตือนผ่าน `pk-toastr` เมื่อข้อมูล required ไม่ครบหรือข้อมูลไม่ถูกต้อง
 - เพิ่ม mapping DRG error code (1-10) เป็นข้อความอ่านง่าย และถือเป็น error เมื่อ `err` มีค่า
 - เพิ่ม mock `HisService.saveIPD()` และเรียกใช้งานตามค่า config `saveHIS`
+- เพิ่มระบบ decode Warning Code แบบ bit flags (1, 2, 4, 8, 16, 32, 64, 128, 256)
+- เพิ่ม `warningMessages` signal สำหรับเก็บรายการคำเตือนที่ decode แล้ว
+- เพิ่ม warning box ใน UI พร้อม styling สีเหลือง แสดงรายการคำเตือนทั้งหมด
+- เพิ่ม toast notification แสดงคำเตือนเมื่อมี warn code
 
 ### เปลี่ยนแปลง
 - อัปเดต AN input ใน DRG page template ให้ trigger lookup ผ่าน `(change)`
