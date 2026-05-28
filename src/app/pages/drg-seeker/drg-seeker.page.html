@@ -113,7 +113,7 @@
       <button type="submit" class="pk-font-mitr font-normal" [disabled]="loading()">
         <pk-icon iconSet="google" name="search" [size]="20"></pk-icon>
         @if (loading()){
-        <span class="pk-spinner pk-spinner-sm"></span>
+        <span class="pk-spinner pk-spinner-sm pk-spinner-inline"></span>
         }
         {{ loading() ? 'Searching...' : 'ค้นหา DRG' }}
       </button>
