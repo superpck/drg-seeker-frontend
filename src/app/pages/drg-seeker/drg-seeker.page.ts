@@ -140,7 +140,7 @@ export class DrgSeekerPageComponent {
 
     console.log('Submitting DRG search with payload:', payload);
     this.drgService.search(payload).subscribe({
-      next: (result) => {
+      next: async (result) => {
         try {
           const drgErrorMessage = this.getDrgErrorMessage(result.err);
           if (drgErrorMessage) {
@@ -153,6 +153,23 @@ export class DrgSeekerPageComponent {
           }
 
           this.response.set(result);
+
+          if (this.config.saveHIS) {
+            const an = this.form.controls.an.value.trim();
+            try {
+              await this.hisService.saveIPD({
+                an,
+                request: payload,
+                response: result,
+                savedAt: new Date().toISOString()
+              });
+            } catch {
+              this.toastrService.warning('คำนวณ DRG สำเร็จ แต่บันทึก HIS ไม่สำเร็จ', 'บันทึก HIS ล้มเหลว', {
+                progress: true
+              });
+            }
+          }
+
           console.log('Received DRG search response:', result);
         } catch {
           this.response.set(null);

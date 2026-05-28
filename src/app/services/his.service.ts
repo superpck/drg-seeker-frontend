@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import Config from '../configs/config';
+import type { DrgSearchRequestPayload, DrgSearchResponse } from './drg.service';
 
 export interface HisIpdFormValue {
   an: string;
@@ -46,6 +47,13 @@ export interface HisIpdFormValue {
   proc20: string;
 }
 
+export interface HisSaveIpdPayload {
+  an: string;
+  request: DrgSearchRequestPayload;
+  response: DrgSearchResponse;
+  savedAt: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class HisService {
   url = Config.apiHis;
@@ -57,5 +65,14 @@ export class HisService {
     */
     void an; // ป้องกัน unused parameter error ลบบออกเมื่อเรียก API จริงได้แล้ว
     return {};
+  }
+
+  async saveIPD(payload: HisSaveIpdPayload): Promise<{ success: boolean }> {
+    /*
+      แก้ไขให้เรียก API จริงที่นี่
+      เช่น return firstValueFrom(this.http.post(`${this.url}/api/ipd/save`, payload));
+    */
+    void payload;
+    return { success: true };
   }
 }
