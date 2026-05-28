@@ -38,15 +38,41 @@ npm start
 
 - ระบบล็อกอินและการจัดการสถานะ session
 - ฟอร์ม DRG seeker พร้อมแสดงตัวอย่าง payload
-- คำนวณ DRG แบบจำลองผ่าน `DrgService`
+- คำนวณ DRG ผ่าน API จริงที่ endpoint `/seeker`
+- แนบ token อัตโนมัติผ่าน HTTP interceptor โดยอ่านจาก `tokenName`
 - การค้นหาข้อมูลจาก AN เมื่อ onchange:
   - ช่อง `an` จะเรียก `onAnChange()`
   - เรียก `HisService.getIpd(an)`
   - นำข้อมูลที่ได้มา patch กลับเข้า form
 
+## โครงสร้างข้อมูลสำคัญ
+
+- DRG search request ส่ง `sdx` และ `proc` แบบแยกคอลัมน์:
+  - `sdx1..sdx12`
+  - `proc1..proc20`
+- DRG response รองรับโครงสร้างจาก backend แบบ:
+  - `status`
+  - `data[0]` (เช่น `drg`, `rw`, `adjrw`, `wtlos`, `ot`, `err`, `warn`)
+  - `tgrp` (`FileName` + `metadata`)
+- หน้า UI จะ parse `tgrp.metadata` แล้วแสดง:
+  - `fileName`
+  - `fileDescription`
+  - `productVersion`
+
+## Validation และ Error Handling
+
+- ฟิลด์บังคับ: `sex`, `los`, `discht`, `pdx`
+- เงื่อนไขอายุ: ต้องกรอกอย่างน้อยหนึ่งค่า (`Age 0-124` หรือ `Age Day 0-365`)
+- ถ้าข้อมูลไม่ครบหรือไม่ถูกต้อง จะแจ้งเตือนผ่าน `pk-toastr`
+- รองรับ DRG error code `1-10` และแปลงเป็นข้อความอ่านง่าย
+- หาก `err` มีค่า (ไม่ใช่ `0`) จะถือว่าเป็นผลลัพธ์ผิดพลาดและไม่แสดงผล DRG ปกติ
+- ป้องกันอาการปุ่มค้าง `Searching...` โดยปิดสถานะ loading ทุกกรณี
+
 ## หมายเหตุการเชื่อมต่อ HIS
 
 `HisService.getIpd()` ปัจจุบันเป็น stub ที่คืนค่า fake `{}`
+
+`HisService.saveIPD()` มี mock flow สำหรับบันทึกผลกลับ HIS เมื่อเปิดใช้ `saveHIS` ใน config
 
 ให้เชื่อม API จริงของสถานพยาบาลที่ไฟล์:
 
@@ -59,9 +85,11 @@ npm start
 - DRG page component: `src/app/pages/drg-seeker/drg-seeker.page.ts`
 - DRG page template: `src/app/pages/drg-seeker/drg-seeker.page.html`
 - HIS service: `src/app/services/his.service.ts`
-- DRG service (mock): `src/app/services/drg.service.ts`
+- DRG service: `src/app/services/drg.service.ts`
+- Token interceptor: `src/app/interceptors/token.interceptor.ts`
 
 ## หมายเหตุ
 
 - Form ใช้ Reactive Forms พร้อม strict typing
 - ช่อง Secondary diagnosis (`sdx`) และ procedure (`proc`) จะแสดงแบบลำดับตามการกรอกช่องก่อนหน้า
+- การเปิด/ปิดบันทึกผล DRG กลับ HIS ควบคุมผ่าน `saveHIS` ใน `src/app/configs/config.ts`
