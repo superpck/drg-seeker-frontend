@@ -60,7 +60,8 @@
         </label>
 
         <label>
-          <span class="label-title">Discharge Type (discht) <span class="required-mark" aria-hidden="true">*</span></span>
+          <span class="label-title">Discharge Type (discht) <span class="required-mark"
+              aria-hidden="true">*</span></span>
           <input type="text" formControlName="discht" required />
         </label>
 
@@ -75,7 +76,8 @@
         </label>
 
         <label>
-          <span class="label-title">Primary Diagnosis (PDX) <span class="required-mark" aria-hidden="true">*</span></span>
+          <span class="label-title">Primary Diagnosis (PDX) <span class="required-mark"
+              aria-hidden="true">*</span></span>
           <input type="text" formControlName="pdx" required />
         </label>
       </div>
@@ -110,6 +112,9 @@
 
       <button type="submit" class="pk-font-mitr font-normal" [disabled]="loading()">
         <pk-icon iconSet="google" name="search" [size]="20"></pk-icon>
+        @if (loading()){
+        <span class="pk-spinner pk-spinner-sm"></span>
+        }
         {{ loading() ? 'Searching...' : 'ค้นหา DRG' }}
       </button>
     </form>
