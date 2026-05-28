@@ -27,8 +27,8 @@ export interface DrgSearchRequest {
 export type DrgSearchRequestPayload = DrgSearchRequest & Record<SdxKey, string> & Record<ProcKey, string>;
 
 export interface DrgSearchResponse {
-  an: string;
-  hn: string;
+  an?: string;
+  hn?: string;
   drg: string;
   rw: number;
   adjrw: number;
