@@ -11,6 +11,7 @@ type SdxKey = `sdx${SdxIndex}`;
 type ProcKey = `proc${ProcIndex}`;
 
 export interface DrgSearchRequest {
+  an?: string;
   sex: SexCode;
   age: any;
   ageday: any;

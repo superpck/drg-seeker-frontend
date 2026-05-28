@@ -223,6 +223,7 @@ export class DrgSeekerPageComponent {
     const value = this.form.getRawValue();
 
     return {
+      an: value.an,
       sex: value.sex,
       age: value.age,
       ageday: value.ageday,
