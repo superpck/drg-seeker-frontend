@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import Config from '../../configs/config';
-import { DrgSearchRequest, DrgSearchResponse, DrgService, InsclCode } from '../../services/drg.service';
+import { DrgSearchRequestPayload, DrgSearchResponse, DrgService, InsclCode } from '../../services/drg.service';
 import { HisIpdFormValue, HisService } from '../../services/his.service';
 import { LoginService } from '../../services/login.service';
 import { PkIcon, PkToastrService } from 'ngx-pk-ui';
@@ -37,7 +37,7 @@ export class DrgSeekerPageComponent {
   readonly loading = signal(false);
   readonly submitError = signal<string | null>(null);
   readonly response = signal<DrgSearchResponse | null>(null);
-  readonly requestPreview = signal<DrgSearchRequest | null>(null);
+  readonly requestPreview = signal<DrgSearchRequestPayload | null>(null);
 
   private readonly drgErrorMessages: Record<string, string> = {
     '1': 'No principal diagnosis',
@@ -179,7 +179,7 @@ export class DrgSeekerPageComponent {
     return this.shouldShowSequentialField('proc', index);
   }
 
-  private toPayload(): DrgSearchRequest {
+  private toPayload(): DrgSearchRequestPayload {
     const value = this.form.getRawValue();
 
     return {
@@ -190,10 +190,40 @@ export class DrgSeekerPageComponent {
       discht: value.discht.trim(),
       admwt: value.admwt,
       pdx: value.pdx.trim().toUpperCase(),
-      sdx: this.collectSequentialCodes('sdx', this.sdxIndexes.length),
-      proc: this.collectSequentialCodes('proc', this.procIndexes.length),
       inscl: value.inscl,
-      price: value.price
+      price: value.price,
+      sdx1: value.sdx1.trim().toUpperCase(),
+      sdx2: value.sdx2.trim().toUpperCase(),
+      sdx3: value.sdx3.trim().toUpperCase(),
+      sdx4: value.sdx4.trim().toUpperCase(),
+      sdx5: value.sdx5.trim().toUpperCase(),
+      sdx6: value.sdx6.trim().toUpperCase(),
+      sdx7: value.sdx7.trim().toUpperCase(),
+      sdx8: value.sdx8.trim().toUpperCase(),
+      sdx9: value.sdx9.trim().toUpperCase(),
+      sdx10: value.sdx10.trim().toUpperCase(),
+      sdx11: value.sdx11.trim().toUpperCase(),
+      sdx12: value.sdx12.trim().toUpperCase(),
+      proc1: value.proc1.trim().toUpperCase(),
+      proc2: value.proc2.trim().toUpperCase(),
+      proc3: value.proc3.trim().toUpperCase(),
+      proc4: value.proc4.trim().toUpperCase(),
+      proc5: value.proc5.trim().toUpperCase(),
+      proc6: value.proc6.trim().toUpperCase(),
+      proc7: value.proc7.trim().toUpperCase(),
+      proc8: value.proc8.trim().toUpperCase(),
+      proc9: value.proc9.trim().toUpperCase(),
+      proc10: value.proc10.trim().toUpperCase(),
+      proc11: value.proc11.trim().toUpperCase(),
+      proc12: value.proc12.trim().toUpperCase(),
+      proc13: value.proc13.trim().toUpperCase(),
+      proc14: value.proc14.trim().toUpperCase(),
+      proc15: value.proc15.trim().toUpperCase(),
+      proc16: value.proc16.trim().toUpperCase(),
+      proc17: value.proc17.trim().toUpperCase(),
+      proc18: value.proc18.trim().toUpperCase(),
+      proc19: value.proc19.trim().toUpperCase(),
+      proc20: value.proc20.trim().toUpperCase()
     };
   }
 
@@ -204,21 +234,6 @@ export class DrgSeekerPageComponent {
 
     const previousValue = this.getTextControlValue(`${prefix}${index - 1}`);
     return previousValue.trim().length > 0;
-  }
-
-  private collectSequentialCodes(prefix: 'sdx' | 'proc', maxCount: number) {
-    const result: string[] = [];
-
-    for (let index = 1; index <= maxCount; index++) {
-      const rawValue = this.getTextControlValue(`${prefix}${index}`);
-      const code = rawValue.trim().toUpperCase();
-      if (!code) {
-        break;
-      }
-      result.push(code);
-    }
-
-    return result;
   }
 
   private getTextControlValue(controlName: string) {

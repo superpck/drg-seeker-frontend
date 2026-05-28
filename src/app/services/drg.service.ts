@@ -5,6 +5,10 @@ import CONFIG from '../configs/config';
 
 export type SexCode = '1' | '2';
 export type InsclCode = 'UC' | 'SSS' | 'CS' | 'CASH';
+type SdxIndex = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+type ProcIndex = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20;
+type SdxKey = `sdx${SdxIndex}`;
+type ProcKey = `proc${ProcIndex}`;
 
 export interface DrgSearchRequest {
   sex: SexCode;
@@ -14,11 +18,11 @@ export interface DrgSearchRequest {
   discht: string;
   admwt: number;
   pdx: string;
-  sdx: string[];
-  proc: string[];
   inscl: InsclCode;
   price: number;
 }
+
+export type DrgSearchRequestPayload = DrgSearchRequest & Record<SdxKey, string> & Record<ProcKey, string>;
 
 export interface DrgSearchResponse {
   drg: string;
@@ -67,7 +71,7 @@ export class DrgService {
   private readonly http = inject(HttpClient);
   private readonly url = CONFIG.apiBaseUrl;
 
-  search(payload: DrgSearchRequest) {
+  search(payload: DrgSearchRequestPayload) {
     return this.http
       .post<DrgApiResponse>(`${this.url}/seeker`, {
         version: '6',
@@ -76,7 +80,7 @@ export class DrgService {
       .pipe(map((response) => this.toSearchResponse(response)));
   }
 
-  private toParams(payload: DrgSearchRequest) {
+  private toParams(payload: DrgSearchRequestPayload) {
     const fields: Record<string, string | number> = {
       sex: payload.sex,
       age: payload.age.toString(),
@@ -89,12 +93,14 @@ export class DrgService {
       price: payload.price
     };
 
-    for (let index = 1; index <= 12; index++) {
-      fields[`sdx${index}`] = payload.sdx[index - 1] ?? '';
+    for (let index = 1 as SdxIndex; index <= 12; index++) {
+      const key = `sdx${index}` as SdxKey;
+      fields[key] = payload[key] ?? '';
     }
 
-    for (let index = 1; index <= 20; index++) {
-      fields[`proc${index}`] = payload.proc[index - 1] ?? '';
+    for (let index = 1 as ProcIndex; index <= 20; index++) {
+      const key = `proc${index}` as ProcKey;
+      fields[key] = payload[key] ?? '';
     }
 
     return fields;

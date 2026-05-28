@@ -125,9 +125,9 @@
     }
 
     @if (response(); as result) {
-    <section class="result-card" aria-label="DRG result">
+    <section class="result-card my-3" aria-label="DRG result">
       <h3>ผลลัพธ์ DRG</h3>
-      <div class="result-grid">
+      <div class="result-grid overflow-auto">
         <p><span>drg</span><strong>{{ result.drg }}</strong></p>
         <p><span>rw</span><strong>{{ result.rw }}</strong></p>
         <p><span>adjrw</span><strong>{{ result.adjrw }}</strong></p>
@@ -136,6 +136,8 @@
         <p><span>err</span><strong>{{ result.err || '-' }}</strong></p>
         <p><span>warn</span><strong>{{ result.warn || '-' }}</strong></p>
         <p><span>status</span><strong>{{ result.status || '-' }}</strong></p>
+      </div>
+      <div class="result-grid overflow-auto">
         <p><span>tgrp file</span><strong>{{ result.tgrp.fileName || '-' }}</strong></p>
         <p><span>tgrp desc</span><strong>{{ result.tgrp.fileDescription || '-' }}</strong></p>
         <p><span>tgrp version</span><strong>{{ result.tgrp.productVersion || '-' }}</strong></p>
