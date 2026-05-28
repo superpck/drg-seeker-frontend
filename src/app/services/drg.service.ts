@@ -12,6 +12,7 @@ type ProcKey = `proc${ProcIndex}`;
 
 export interface DrgSearchRequest {
   an?: string;
+  hn?: string;
   sex: SexCode;
   age: any;
   ageday: any;
@@ -26,6 +27,8 @@ export interface DrgSearchRequest {
 export type DrgSearchRequestPayload = DrgSearchRequest & Record<SdxKey, string> & Record<ProcKey, string>;
 
 export interface DrgSearchResponse {
+  an?: string;
+  hn?: string;
   drg: string;
   rw: number;
   adjrw: number;
@@ -42,6 +45,8 @@ export interface DrgSearchResponse {
 }
 
 interface DrgApiDataRow {
+  an?: string;
+  hn?: string;
   drg?: string;
   rw?: number;
   adjrw?: number;
@@ -83,6 +88,8 @@ export class DrgService {
 
   private toParams(payload: DrgSearchRequestPayload) {
     const fields: Record<string, string | number> = {
+      hn: payload?.hn ?? '',
+      an: payload?.an ?? '',
       sex: payload.sex,
       age: payload.age.toString(),
       ageday: payload.ageday.toString(),

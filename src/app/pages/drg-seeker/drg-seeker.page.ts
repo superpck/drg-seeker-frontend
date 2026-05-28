@@ -67,6 +67,7 @@ export class DrgSeekerPageComponent {
 
   readonly form = this.formBuilder.nonNullable.group({
     an: this.formBuilder.nonNullable.control(''),
+    hn: this.formBuilder.nonNullable.control(''),
     sex: this.formBuilder.nonNullable.control<'1' | '2'>('1', [Validators.required]),
     age: this.formBuilder.nonNullable.control(0, [Validators.min(0), Validators.max(124)]),
     ageday: this.formBuilder.nonNullable.control(0, [Validators.min(0), Validators.max(365)]),
@@ -223,6 +224,7 @@ export class DrgSeekerPageComponent {
     const value = this.form.getRawValue();
 
     return {
+      hn: value.hn,
       an: value.an,
       sex: value.sex,
       age: value.age,

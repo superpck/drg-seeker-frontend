@@ -3,7 +3,8 @@ import Config from '../configs/config';
 import type { DrgSearchRequestPayload, DrgSearchResponse } from './drg.service';
 
 export interface HisIpdFormValue {
-  an: string;
+  an?: string;
+  hn?: string;
   sex: '1' | '2';
   age: number;
   ageday: number;
