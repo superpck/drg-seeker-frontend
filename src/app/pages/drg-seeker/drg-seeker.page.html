@@ -127,7 +127,7 @@
     @if (response(); as result) {
     <section class="result-card my-3 pk-font-bai-sarabun" aria-label="DRG result">
       <h3 class="pk-font-mitr">ผลลัพธ์ DRG</h3>
-      
+
       @if (warningMessages().length > 0) {
       <div class="warning-box mb-3 pk-font-bai-jamjuree" role="alert">
         <strong class="pk-font-mitr">คำเตือน:</strong>
@@ -163,10 +163,12 @@
         <h3>Payload ที่ส่งไปค้นหา</h3>
         <pre>{{ req | json }}</pre>
       </div>
+      @if (response(); as result) {
       <div>
         <h3>Result</h3>
         <pre>{{ result | json }}</pre>
       </div>
+      }
     </section>
     }
 
