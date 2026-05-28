@@ -7,5 +7,6 @@ export default {
   appDescription: description,
   apiBaseUrl: 'http://localhost:3000',
   apiHis: 'http://localhost:3001',
+  saveHIS: false,
   tokenName: 'drg-seeker-token'
 }
