@@ -141,20 +141,28 @@ export class DrgSeekerPageComponent {
     console.log('Submitting DRG search with payload:', payload);
     this.drgService.search(payload).subscribe({
       next: (result) => {
-        const drgErrorMessage = this.getDrgErrorMessage(result.err);
-        if (drgErrorMessage) {
+        try {
+          const drgErrorMessage = this.getDrgErrorMessage(result.err);
+          if (drgErrorMessage) {
+            this.response.set(null);
+            this.submitError.set(`DRG Error ${result.err}: ${drgErrorMessage}`);
+            this.toastrService.error(`DRG Error ${result.err}: ${drgErrorMessage}`, 'คำนวณ DRG ไม่สำเร็จ', {
+              progress: true
+            });
+            return;
+          }
+
+          this.response.set(result);
+          console.log('Received DRG search response:', result);
+        } catch {
           this.response.set(null);
-          this.submitError.set(`DRG Error ${result.err}: ${drgErrorMessage}`);
-          this.toastrService.error(`DRG Error ${result.err}: ${drgErrorMessage}`, 'คำนวณ DRG ไม่สำเร็จ', {
+          this.submitError.set('Response format is invalid. Please check API response.');
+          this.toastrService.error('Response format is invalid. Please check API response.', 'คำนวณ DRG ไม่สำเร็จ', {
             progress: true
           });
+        } finally {
           this.loading.set(false);
-          return;
         }
-
-        this.response.set(result);
-        console.log('Received DRG search response:', result);
-        this.loading.set(false);
       },
       error: () => {
         this.submitError.set('Cannot calculate DRG right now. Please try again.');
@@ -240,8 +248,8 @@ export class DrgSeekerPageComponent {
     return isAgeInRange || isAgeDayInRange;
   }
 
-  private getDrgErrorMessage(errorCode: string) {
-    const normalizedCode = errorCode.trim();
+  private getDrgErrorMessage(errorCode: unknown) {
+    const normalizedCode = String(errorCode ?? '').trim();
     if (!normalizedCode || normalizedCode === '0') {
       return null;
     }
