@@ -43,6 +43,8 @@ export interface DrgSearchResponse {
 }
 
 interface DrgApiDataRow {
+  an?: string;
+  hn?: string;
   drg?: string;
   rw?: number;
   adjrw?: number;
